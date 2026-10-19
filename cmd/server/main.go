@@ -20,5 +20,7 @@ func main() {
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Health check OK")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	if _, err := w.Write([]byte("OK")); err != nil {
+		fmt.Println("Error writing health response:", err)
+	}
 }
