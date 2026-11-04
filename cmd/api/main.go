@@ -2,15 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/jovanpet/campus-study-group/internal/config"
-	"github.com/jovanpet/campus-study-group/internal/example"
-	"github.com/jovanpet/campus-study-group/internal/httpapi"
 	"github.com/jovanpet/campus-study-group/internal/store"
 )
 
@@ -47,14 +44,14 @@ func run(cmd string) error {
 
 	switch cmd {
 	case "serve":
-		exampleHandler := example.NewHandler(example.NewService(example.NewPostgresRepository(db)))
+		// exampleHandler := example.NewHandler(example.NewService(example.NewPostgresRepository(db)))
 
-		handler := httpapi.NewHandler(log, exampleHandler)
-		srv := httpapi.New(fmt.Sprintf(":%s", cfg.Port), handler, log, cfg.ShutdownTimeout)
-		if err := srv.Run(ctx); err != nil {
-			log.Error("server error", "error", err)
-			return err
-		}
+		// handler := httpapi.NewHandler(log, exampleHandler)
+		// srv := httpapi.New(fmt.Sprintf(":%s", cfg.Port), handler, log, cfg.ShutdownTimeout)
+		// if err := srv.Run(ctx); err != nil {
+		// 	log.Error("server error", "error", err)
+		// 	return err
+		// }
 	case "migrate":
 		if err := store.Migrate(ctx, db); err != nil {
 			log.Error("migration failed", "error", err)
