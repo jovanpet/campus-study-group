@@ -32,6 +32,11 @@ resource "heroku_addon" "db" {
   plan   = "heroku-postgresql:essential-0"
 }
 
+resource "heroku_addon" "logs" {
+  app_id = heroku_app.app.id
+  plan   = "logtail:free"
+}
+
 resource "heroku_formation" "web" {
   app_id   = heroku_app.app.id
   type     = "web"

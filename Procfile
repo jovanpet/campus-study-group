@@ -1,1 +1,2 @@
-web: bin/server
+web: bin/api
+release: bin/api migrate
