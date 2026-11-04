@@ -34,6 +34,7 @@ type Config struct {
 }
 
 type Apple struct {
+	ClientID   string // bundle ID; must match the identity token's aud
 	TeamID     string
 	KeyID      string
 	PrivateKey string
@@ -61,6 +62,7 @@ func load(getenv func(string) string) (Config, error) {
 		DatabaseURL:   getenv("DATABASE_URL"),
 		SessionSecret: getenv("SESSION_SECRET"),
 		Apple: Apple{
+			ClientID:   getenv("APPLE_CLIENT_ID"),
 			TeamID:     getenv("APPLE_TEAM_ID"),
 			KeyID:      getenv("APPLE_KEY_ID"),
 			PrivateKey: getenv("APPLE_PRIVATE_KEY"),
@@ -96,6 +98,7 @@ func load(getenv func(string) string) (Config, error) {
 			errs = append(errs, fmt.Errorf("SESSION_SECRET must be at least %d characters in production", minSessionSecretLen))
 		}
 		for name, v := range map[string]string{
+			"APPLE_CLIENT_ID":   cfg.Apple.ClientID,
 			"APPLE_TEAM_ID":     cfg.Apple.TeamID,
 			"APPLE_KEY_ID":      cfg.Apple.KeyID,
 			"APPLE_PRIVATE_KEY": cfg.Apple.PrivateKey,

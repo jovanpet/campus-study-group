@@ -14,6 +14,7 @@ func validProd() map[string]string {
 	return map[string]string{
 		"DATABASE_URL":      "postgres://u:p@localhost:5432/db",
 		"SESSION_SECRET":    strings.Repeat("x", 64),
+		"APPLE_CLIENT_ID":   "com.example.app",
 		"APPLE_TEAM_ID":     "TEAM",
 		"APPLE_KEY_ID":      "KEY",
 		"APPLE_PRIVATE_KEY": "PRIVATE",
@@ -57,7 +58,7 @@ func TestLoadReportsEveryError(t *testing.T) {
 	}
 	for _, want := range []string{
 		"PORT", "DATABASE_URL is required", "LOG_LEVEL", "SHUTDOWN_TIMEOUT",
-		"SESSION_SECRET", "APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY",
+		"SESSION_SECRET", "APPLE_CLIENT_ID", "APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY",
 	} {
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("error missing %q:\n%v", want, err)

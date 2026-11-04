@@ -17,22 +17,29 @@ CREATE TABLE majors (
     name text NOT NULL UNIQUE
 );
 
--- Searching by name.display_name isn ’ t unique
---- and isn ’ t indexed for search. Matching on it needs a trigram index (pg_trgm)
--- or a simple ILIKE limited to people at the same school.That second option is probably enough at your scale.
---
+-- A row is created at first Apple sign-in with only apple_sub (and display_name
+-- if Apple shared it). Onboarding fills in the profile; username is set last,
+-- so a NULL username means the user hasn't finished onboarding.
 CREATE TABLE users (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     apple_sub text NOT NULL UNIQUE,
     apple_refresh_token text,
-    username citext NOT NULL UNIQUE,
-    display_name text NOT NULL,
-    school_id uuid NOT NULL REFERENCES schools (id),
-    major_id uuid NOT NULL REFERENCES majors (id) ON DELETE
-    SET
-        NULL,
-        degree degree,
-        created_at timestamptz NOT NULL DEFAULT now()
+    username citext UNIQUE,
+    display_name text,
+    school_id uuid REFERENCES schools (id),
+    major_id uuid REFERENCES majors (id),
+    degree degree,
+    do_not_disturb bool NOT NULL DEFAULT false,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT users_onboarded_profile_complete CHECK (
+        username IS NULL
+        OR (
+            display_name IS NOT NULL
+            AND school_id IS NOT NULL
+            AND major_id IS NOT NULL
+            AND degree IS NOT NULL
+        )
+    )
 );
 
 CREATE TABLE auth_tokens (
@@ -57,7 +64,8 @@ CREATE TABLE friendships (
     CHECK (requested_by IN (user_a, user_b)),
     CHECK (
         (status = 'accepted') = (accepted_at IS NOT NULL)
-    )
+    ),
+    CHECK (user_a < user_b)
 );
 
 CREATE INDEX friendships_user_b_idx ON friendships (user_b);
@@ -103,6 +111,10 @@ CREATE TABLE sessions (
     CHECK (
         ended_at IS NULL
         OR ended_at >= started_at
+    ),
+    CHECK(
+        planned_end_at IS NULL
+        OR planned_end_at >= started_at
     )
 );
 

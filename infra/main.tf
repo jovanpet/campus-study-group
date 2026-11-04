@@ -16,10 +16,11 @@ resource "heroku_app" "app" {
   name   = var.app_name
   region = var.region
   config_vars = {
-    APP_NAME       = var.app_name
-    APPLE_TEAM_ID  = var.apple_team_id
-    APPLE_KEY_ID   = var.apple_key_id
-    SESSION_SECRET = random_password.session.result
+    APP_NAME        = var.app_name
+    APPLE_CLIENT_ID = var.apple_client_id
+    APPLE_TEAM_ID   = var.apple_team_id
+    APPLE_KEY_ID    = var.apple_key_id
+    SESSION_SECRET  = random_password.session.result
   }
   sensitive_config_vars = {
     APPLE_PRIVATE_KEY = var.apple_private_key
