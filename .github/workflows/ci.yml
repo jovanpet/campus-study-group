@@ -71,43 +71,87 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Heroku rejects pushes from shallow clones
-      - name: Push to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP: campus-study-group
-        run: git push "https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP}.git" HEAD:refs/heads/main
-
-      # `git push` exits 0 even when the release phase (migrations) fails,
-      # so check the release status through the Heroku Platform API.
-      - name: Verify Heroku release
+      # A plain `git push` is a no-op when Heroku already has this commit (e.g. when
+      # re-running a deploy whose release command failed), so in that case create a
+      # new release from the commit's existing build through the Platform API.
+      - name: Deploy to Heroku
+        id: deploy
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP: campus-study-group
         run: |
           set -euo pipefail
           api() {
-            curl -fsS "https://api.heroku.com$1" \
+            local path=$1; shift
+            curl -fsS "https://api.heroku.com${path}" \
               -H "Accept: application/vnd.heroku+json; version=3" \
-              -H "Authorization: Bearer ${HEROKU_API_KEY}" \
-              -H "Range: version ..; order=desc, max=1"
+              -H "Authorization: Bearer ${HEROKU_API_KEY}" "$@"
           }
 
           sha="${GITHUB_SHA:0:8}"
+          before=$(api "/apps/${HEROKU_APP}/releases" -H "Range: version ..; order=desc, max=1" | jq -r '.[0].version // 0')
+          echo "before_version=${before}" >> "$GITHUB_OUTPUT"
+
+          remote="https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP}.git"
+          deployed=$(git ls-remote "$remote" refs/heads/main | cut -f1)
+
+          if [ "$deployed" != "$GITHUB_SHA" ]; then
+            git push "$remote" HEAD:refs/heads/main
+            exit 0
+          fi
+
+          echo "Heroku already has ${sha}; re-releasing its existing build instead of pushing."
+          slug=$(api "/apps/${HEROKU_APP}/builds" -H "Range: created_at ..; order=desc, max=50" \
+            | jq -r --arg sha "$GITHUB_SHA" \
+                '[.[] | select(.source_blob.version == $sha and .status == "succeeded")][0].slug.id // empty')
+          if [ -z "$slug" ]; then
+            echo "::error title=No Heroku build for ${sha}::Heroku has ${sha} but no successful build of it to release."
+            exit 1
+          fi
+
+          body=$(jq -n --arg slug "$slug" --arg d "Deploy ${sha} (re-release)" '{slug: $slug, description: $d}')
+          release=$(api "/apps/${HEROKU_APP}/releases" -X POST -H "Content-Type: application/json" -d "$body")
+          echo "Created release v$(jq -r .version <<<"$release") from slug ${slug}"
+
+      # Neither path above fails when the release phase (migrations) fails, so check
+      # the status of the release created for this commit by this run.
+      - name: Verify Heroku release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP: campus-study-group
+          BEFORE_VERSION: ${{ steps.deploy.outputs.before_version }}
+        run: |
+          set -euo pipefail
+          api() {
+            curl -fsS "https://api.heroku.com$1" \
+              -H "Accept: application/vnd.heroku+json; version=3" \
+              -H "Authorization: Bearer ${HEROKU_API_KEY}" \
+              -H "Range: version ..; order=desc, max=10"
+          }
+
+          sha="${GITHUB_SHA:0:8}"
+          release=""
+          status=""
+          # Up to 5 minutes for the release to appear and its release command to finish.
           for _ in $(seq 1 60); do
-            release=$(api "/apps/${HEROKU_APP}/releases" | jq '.[0]')
-            status=$(jq -r .status <<<"$release")
-            [ "$status" != "pending" ] && break
+            release=$(api "/apps/${HEROKU_APP}/releases" \
+              | jq --arg sha "$sha" --argjson before "$BEFORE_VERSION" \
+                  '[.[] | select(.version > $before and (.description | contains($sha)))][0] // empty')
+            if [ -n "$release" ]; then
+              status=$(jq -r .status <<<"$release")
+              [ "$status" != "pending" ] && break
+            fi
             sleep 5
           done
 
-          version=$(jq -r .version <<<"$release")
-          description=$(jq -r .description <<<"$release")
-          echo "Latest release: v${version} (${status}) - ${description}"
-
-          if [[ "$description" != *"$sha"* ]]; then
-            echo "::error title=Heroku release not found::Latest release v${version} is not for commit ${sha}: ${description}"
+          if [ -z "$release" ]; then
+            echo "::error title=Heroku release not found::No release for ${sha} was created after v${BEFORE_VERSION}."
             exit 1
           fi
+
+          version=$(jq -r .version <<<"$release")
+          description=$(jq -r .description <<<"$release")
+          echo "Release for ${sha}: v${version} (${status}) - ${description}"
 
           if [ "$status" != "succeeded" ]; then
             echo "::error title=Heroku release v${version} ${status}::Release command failed for ${sha}. Production is still on the previous release. See the release output below."
