@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch: # manual "Run workflow" button for re-deploys
 
 permissions:
   contents: read
@@ -55,7 +56,9 @@ jobs:
           version: v2.15.0
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Runs on every push to main (or a manual run), then waits for approval:
+    # the production environment requires a reviewer (repo Settings -> Environments).
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: [vet, test, lint]
     runs-on: ubuntu-latest
     concurrency:
@@ -73,3 +76,56 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP: campus-study-group
         run: git push "https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP}.git" HEAD:refs/heads/main
+
+      # `git push` exits 0 even when the release phase (migrations) fails,
+      # so check the release status through the Heroku Platform API.
+      - name: Verify Heroku release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP: campus-study-group
+        run: |
+          set -euo pipefail
+          api() {
+            curl -fsS "https://api.heroku.com$1" \
+              -H "Accept: application/vnd.heroku+json; version=3" \
+              -H "Authorization: Bearer ${HEROKU_API_KEY}" \
+              -H "Range: version ..; order=desc, max=1"
+          }
+
+          sha="${GITHUB_SHA:0:8}"
+          for _ in $(seq 1 60); do
+            release=$(api "/apps/${HEROKU_APP}/releases" | jq '.[0]')
+            status=$(jq -r .status <<<"$release")
+            [ "$status" != "pending" ] && break
+            sleep 5
+          done
+
+          version=$(jq -r .version <<<"$release")
+          description=$(jq -r .description <<<"$release")
+          echo "Latest release: v${version} (${status}) - ${description}"
+
+          if [[ "$description" != *"$sha"* ]]; then
+            echo "::error title=Heroku release not found::Latest release v${version} is not for commit ${sha}: ${description}"
+            exit 1
+          fi
+
+          if [ "$status" != "succeeded" ]; then
+            echo "::error title=Heroku release v${version} ${status}::Release command failed for ${sha}. Production is still on the previous release. See the release output below."
+            output_url=$(jq -r '.output_stream_url // empty' <<<"$release")
+            output=""
+            if [ -n "$output_url" ]; then
+              output=$(curl -fsS "$output_url" || true)
+              echo "----- release command output -----"
+              echo "$output"
+            fi
+            {
+              echo "## ❌ Heroku release v${version} ${status}"
+              echo "Commit \`${sha}\` built, but the release command failed, so it was **not** deployed."
+              echo '```'
+              echo "${output:-no release output available}" | tail -n 50
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "## ✅ Heroku release v${version} succeeded (\`${sha}\`)" >> "$GITHUB_STEP_SUMMARY"
