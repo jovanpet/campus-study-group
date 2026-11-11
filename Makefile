@@ -4,13 +4,16 @@ export
 BIN := bin/api
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
 
-.PHONY: build run test vet lint check clean
+.PHONY: build run migrate test vet lint check clean
 
 build:
 	go build -o $(BIN) ./cmd/api
 
 run: build
 	./$(BIN)
+
+migrate: build
+	./$(BIN) migrate
 
 test:
 	go test -race ./...
