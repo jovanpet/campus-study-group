@@ -1,3 +1,5 @@
 .env
 bin/
 .vscode/
+docs/auth.md
+docs/testing-auth.md
