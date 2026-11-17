@@ -2,6 +2,25 @@
 
 Go API deployed to Heroku (`campus-study-group`), with Postgres migrations managed by [goose](https://github.com/pressly/goose).
 
+## Auth
+
+Users sign in with Apple. `POST /auth/apple` takes the app's identity token and authorization code and returns an API token, sent on every other request as `Authorization: Bearer <token>`.
+
+The user row is created at first sign-in. Until the profile is completed with `PUT /me/profile`, responses carry `"onboarded": false`, so the app can send a user who quit mid-onboarding back to the profile form.
+
+| Route | |
+|---|---|
+| `POST /auth/apple` | Sign in or sign up |
+| `POST /auth/logout` | Invalidate the current token |
+| `GET /me` | Current user |
+| `PUT /me/profile` | Finish onboarding or edit the profile |
+| `DELETE /me` | Revoke the Apple grant and delete the account |
+| `GET /schools`, `GET /majors` | Options for the profile form |
+
+API tokens last 90 days from last use; only their hash is stored. `SESSION_SECRET` encrypts the stored Apple refresh tokens, so rotating it means existing accounts are deleted without the Apple-side revoke.
+
+For how the flow works end to end, see [docs/auth.md](docs/auth.md). To test without an Apple device (dev sign-in, test helpers), see [docs/testing-auth.md](docs/testing-auth.md).
+
 ## Database migrations
 
 Migrations live in `internal/store/migrations/` and are embedded in the binary. They run automatically on every Heroku release (`release: bin/api migrate` in the `Procfile`). To run them locally (uses `DATABASE_URL` from `.env`):

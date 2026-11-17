@@ -20,10 +20,12 @@ CREATE TABLE majors (
 -- A row is created at first Apple sign-in with only apple_sub (and display_name
 -- if Apple shared it). Onboarding fills in the profile; username is set last,
 -- so a NULL username means the user hasn't finished onboarding.
+-- apple_refresh_token_enc is the Apple refresh token encrypted by the API
+-- (AES-GCM); it is only used to revoke the Apple grant on account deletion.
 CREATE TABLE users (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     apple_sub text NOT NULL UNIQUE,
-    apple_refresh_token text,
+    apple_refresh_token_enc bytea,
     username citext UNIQUE,
     display_name text,
     school_id uuid REFERENCES schools (id),
@@ -42,13 +44,14 @@ CREATE TABLE users (
     )
 );
 
+-- API tokens. Only the SHA-256 hash of a token is stored; logging out deletes
+-- the row.
 CREATE TABLE auth_tokens (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    token_hash text NOT NULL UNIQUE,
+    token_hash bytea NOT NULL UNIQUE,
     created_at timestamptz NOT NULL DEFAULT now(),
-    expires_at timestamptz NOT NULL,
-    revoked_at timestamptz
+    expires_at timestamptz NOT NULL
 );
 
 CREATE INDEX auth_tokens_user_id_idx ON auth_tokens (user_id);

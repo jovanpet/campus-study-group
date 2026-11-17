@@ -19,6 +19,9 @@ const (
 	EnvDevelopment = "development"
 
 	minSessionSecretLen = 32
+	// devSessionSecret lets development run without SESSION_SECRET. Production
+	// never uses it: Load rejects a short secret there.
+	devSessionSecret = "development-only-session-secret-0000"
 )
 
 type Config struct {
@@ -92,6 +95,10 @@ func load(getenv func(string) string) (Config, error) {
 		errs = append(errs, fmt.Errorf("SHUTDOWN_TIMEOUT must be between 0s and 30s, got %s", timeout))
 	}
 	cfg.ShutdownTimeout = timeout
+
+	if !cfg.IsProduction() && cfg.SessionSecret == "" {
+		cfg.SessionSecret = devSessionSecret
+	}
 
 	if cfg.IsProduction() {
 		if len(cfg.SessionSecret) < minSessionSecretLen {
