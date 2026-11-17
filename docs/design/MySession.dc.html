@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your session</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#16181A}a:hover{color:#000000}
+button{font:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; min-height: 0; padding: 52px 24px 0; display: flex; flex-direction: column; gap: 24px">
+    <a href="Studying.dc.html" aria-label="Back to home" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16181A">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{accent}}; display: flex; align-items: center; gap: 8px">
+        <span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: {{accent}}"></span>
+        Your session
+      </div>
+      <h1 style="margin: 0; font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">42m</h1>
+      <div style="font-size: 15px; color: #3C4043; font-variant-numeric: tabular-nums">Started 8:48 PM · ends 9:30 PM</div>
+      <div aria-hidden="true" style="margin-top: 4px; height: 4px; border-radius: 2px; background: #E4E1D9; overflow: hidden">
+        <div style="width: 51%; height: 100%; border-radius: 2px; background: {{accent}}"></div>
+      </div>
+    </div>
+
+    <ul style="list-style: none; margin: 0; padding: 0 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E4E1D9; display: flex; flex-direction: column">
+      <sc-for list="{{details}}" as="d" hint-placeholder-count="3">
+        <li style="{{d.divider}}">
+          <button style="width: 100%; min-height: 56px; padding: 0; border: 0; background: transparent; color: #16181A; display: flex; align-items: center; gap: 12px; text-align: left">
+            <span style="font-size: 15px; color: #5F6368; width: 84px; flex-shrink: 0">{{d.label}}</span>
+            <span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.value}}</span>
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </li>
+      </sc-for>
+    </ul>
+
+    <section style="display: flex; flex-direction: column">
+      <h2 style="margin: 0 0 4px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Joined you · 2</h2>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+        <sc-for list="{{joined}}" as="p" hint-placeholder-count="2">
+          <li style="border-bottom: 1px solid #E4E1D9">
+            <a href="FriendProfile.dc.html" style="min-height: 60px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #16181A">
+              <div aria-hidden="true" style="width: 36px; height: 36px; border-radius: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; {{p.avatarStyle}}">{{p.initial}}</div>
+              <div style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">{{p.name}}</div>
+            </a>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+  </div>
+
+  <footer style="padding: 12px 24px 34px; border-top: 1px solid #E4E1D9; display: flex">
+    <a href="Main.dc.html" style="flex: 1; height: 56px; border-radius: 28px; background: #16181A; color: #F6F5F1; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700">End session</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1F7A4D","options":["#1F7A4D","#2F5BD3","#C2410C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = (bg, fg) => 'background: ' + bg + '; color: ' + fg;
+    const line = 'border-bottom: 1px solid #EEECE6';
+    return {
+      accent: this.props.accent ?? '#1F7A4D',
+      details: [
+        { label: 'Spot', value: 'SciLi, 4th floor', divider: line },
+        { label: 'Ends', value: '9:30 PM', divider: line },
+        { label: 'Visible to', value: 'All friends', divider: '' }
+      ],
+      joined: [
+        { initial: 'A', name: 'Ana', avatarStyle: st('#E2D9C6', '#3A3226') },
+        { initial: 'L', name: 'Leo', avatarStyle: st('#C9D7F2', '#1F2B44') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

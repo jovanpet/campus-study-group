@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Edit profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#16181A}a:hover{color:#000000}
+button{font:inherit;cursor:pointer}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; min-height: 0; padding: 52px 24px 0; display: flex; flex-direction: column; gap: 24px">
+    <a href="Profile.dc.html" aria-label="Back to your profile" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16181A">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em">Edit profile</h1>
+
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="ep-name" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Name</label>
+        <input id="ep-name" type="text" value="Jovan" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px solid #D6D3CB; background: #FFFFFF; color: #16181A; font-size: 17px; outline: none">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="ep-username" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Username</label>
+        <div style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px solid #D6D3CB; background: #FFFFFF; display: flex; align-items: center; gap: 2px">
+          <span aria-hidden="true" style="font-size: 17px; color: #5F6368">@</span>
+          <input id="ep-username" type="text" value="jovan" style="flex: 1; min-width: 0; height: 100%; border: 0; padding: 0; background: transparent; color: #16181A; font-size: 17px; outline: none">
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div id="ep-school-label" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">School</div>
+        <button aria-labelledby="ep-school-label ep-school-value" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px solid #D6D3CB; background: #FFFFFF; color: #16181A; display: flex; align-items: center; justify-content: space-between; font-size: 17px; text-align: left">
+          <span id="ep-school-value">Brown University</span>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div id="ep-major-label" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Major</div>
+        <button aria-labelledby="ep-major-label ep-major-value" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px solid #D6D3CB; background: #FFFFFF; color: #16181A; display: flex; align-items: center; justify-content: space-between; font-size: 17px; text-align: left">
+          <span id="ep-major-value">Computer Science</span>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer style="padding: 12px 24px 34px; border-top: 1px solid #E4E1D9; display: flex">
+    <a href="Profile.dc.html" style="flex: 1; height: 56px; border-radius: 28px; background: #16181A; color: #F6F5F1; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700">Save</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
