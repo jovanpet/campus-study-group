@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New group</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#16181A}a:hover{color:#000000}
+button{font:inherit;cursor:pointer}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 920px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; min-height: 0; padding: 52px 24px 0; display: flex; flex-direction: column; gap: 20px">
+    <a href="StartSheet.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16181A">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em">New group</h1>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="gname" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Name</label>
+      <input id="gname" type="text" placeholder="e.g. CS 1670 study" value="@usernam or Name" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px solid #16181A; background: #FFFFFF; color: #16181A; font-size: 17px; outline: none">
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Add friends · {{selectedCount}} selected</h2>
+
+      <div style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1.5px solid #D6D3CB; background: #FFFFFF; display: flex; align-items: center; gap: 10px">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input type="search" aria-label="Search friends" placeholder="Search friends" value="{{query}}" onChange="{{onSearch}}" style="flex: 1; min-width: 0; height: 100%; border: 0; padding: 0; background: transparent; color: #16181A; font-size: 16px; outline: none">
+      </div>
+
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+        <sc-for list="{{friends}}" as="f" hint-placeholder-count="6">
+          <li style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E4E1D9">
+            <div aria-hidden="true" style="width: 36px; height: 36px; border-radius: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; {{f.avatarStyle}}">{{f.initial}}</div>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span id="{{f.id}}" style="font-size: 16px; font-weight: 700">{{f.name}}</span>
+              <span style="font-size: 13px; color: #5F6368; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.major}}</span>
+            </span>
+            <button role="checkbox" aria-checked="{{f.checked}}" aria-labelledby="{{f.id}}" onClick="{{f.toggle}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+              <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 7px; display: flex; align-items: center; justify-content: center; {{f.boxStyle}}">
+                <sc-if value="{{f.on}}" hint-placeholder-val="{{false}}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F6F5F1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                </sc-if>
+              </span>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+      <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+        <div style="padding: 16px 0; font-size: 15px; color: #5F6368; text-align: center">No friends match</div>
+      </sc-if>
+    </section>
+  </div>
+
+  <footer style="padding: 12px 24px 34px; border-top: 1px solid #E4E1D9; display: flex">
+    <a href="StartSheet.dc.html" style="flex: 1; height: 56px; border-radius: 28px; background: #16181A; color: #F6F5F1; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700">Create group</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":920}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { query: '', selected: { ana: true, leo: true } };
+  }
+  renderVals() {
+    const all = [
+      ['A', 'Ana', 'Neuroscience', '#E2D9C6', '#3A3226'],
+      ['I', 'Ines', 'Economics', '#E6D6EC', '#3B2443'],
+      ['L', 'Leo', 'Computer Science', '#C9D7F2', '#1F2B44'],
+      ['M', 'Marko', 'Computer Science', '#D6DBE6', '#262E3E'],
+      ['P', 'Priya', 'Computer Science', '#D3DED3', '#24382A'],
+      ['S', 'Sam', 'Computer Science', '#F2D3C9', '#4A2418']
+    ];
+    const sel = this.state.selected;
+    const q = this.state.query.trim().toLowerCase();
+    const friends = all
+      .map(([initial, name, major, bg, fg]) => {
+        const key = name.toLowerCase();
+        const on = !!sel[key];
+        return {
+          key, initial, name, major, on, id: 'g-' + key,
+          checked: on ? 'true' : 'false',
+          avatarStyle: 'background: ' + bg + '; color: ' + fg,
+          boxStyle: on ? 'background: #16181A' : 'border: 2px solid #B9B5AC',
+          toggle: () => this.setState({ selected: { ...sel, [key]: !on } })
+        };
+      })
+      .filter((f) => !q || f.name.toLowerCase().includes(q));
+    return {
+      query: this.state.query,
+      onSearch: (e) => this.setState({ query: e.target.value }),
+      friends,
+      empty: friends.length === 0,
+      selectedCount: Object.values(sel).filter(Boolean).length
+    };
+  }
+}
+</script>
+</body>
+</html>

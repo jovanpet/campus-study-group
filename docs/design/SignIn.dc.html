@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#3C4043}a:hover{color:#16181A}
+button{font:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; padding: 0 24px 40px; display: flex; flex-direction: column">
+  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 36px">
+    <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 24px; background: #FFFFFF; border: 1px solid #E4E1D9">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="width: 40px; height: 40px; border-radius: 20px; background: #E2D9C6; color: #3A3226; display: flex; align-items: center; justify-content: center; font-weight: 700">A</div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+          <div style="font-size: 15px; font-weight: 700">Ana</div>
+          <div style="font-size: 13px; color: #5F6368">SciLi, 4th floor · 1h 12m</div>
+        </div>
+        <span style="width: 8px; height: 8px; border-radius: 4px; background: {{accent}}"></span>
+      </div>
+      <div style="height: 1px; background: #E4E1D9"></div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="width: 40px; height: 40px; border-radius: 20px; background: #D3DED3; color: #24382A; display: flex; align-items: center; justify-content: center; font-weight: 700">P</div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+          <div style="font-size: 15px; font-weight: 700">Priya</div>
+          <div style="font-size: 13px; color: #5F6368">CIT lounge · 38m</div>
+        </div>
+        <span style="width: 8px; height: 8px; border-radius: 4px; background: {{accent}}"></span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h1 style="margin: 0; font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em">See where your friends are studying.</h1>
+      <p style="margin: 0; font-size: 17px; line-height: 1.45; color: #3C4043">Start a session and your friends get a ping. Join them in one tap.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <a href="Setup.dc.html" style="height: 56px; border-radius: 28px; background: #000000; color: #FFFFFF; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700">Sign in with Apple</a>
+    <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5F6368; text-align: center">By continuing you agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1F7A4D","options":["#1F7A4D","#2F5BD3","#C2410C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#1F7A4D' };
+  }
+}
+</script>
+</body>
+</html>

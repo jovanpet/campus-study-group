@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ana's session</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#16181A}a:hover{color:#000000}
+button{font:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; min-height: 0; padding: 52px 24px 0; display: flex; flex-direction: column; gap: 24px">
+    <a href="Main.dc.html" aria-label="Back to home" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16181A">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+
+    <a href="FriendProfile.dc.html" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: #16181A">
+      <div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 28px; background: #E2D9C6; color: #3A3226; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0">A</div>
+      <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+        <div style="font-size: 22px; font-weight: 700">Ana</div>
+        <div style="font-size: 14px; color: {{accent}}; display: flex; align-items: center; gap: 6px">
+          <span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 4px; background: {{accent}}"></span>
+          Studying now
+        </div>
+      </div>
+    </a>
+
+    <div style="padding: 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E4E1D9; display: flex; flex-direction: column; gap: 16px">
+      <h1 style="margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em">SciLi, 4th floor quiet room</h1>
+      <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <dt style="font-size: 13px; color: #5F6368">Started</dt>
+          <dd style="margin: 0; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums">7:48 PM</dd>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <dt style="font-size: 13px; color: #5F6368">Studying for</dt>
+          <dd style="margin: 0; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums">1h 12m</dd>
+        </div>
+      </dl>
+      <div style="font-size: 14px; color: #5F6368">No end time set</div>
+    </div>
+
+    <section style="display: flex; flex-direction: column">
+      <h2 style="margin: 0 0 4px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Who's here · {{count}}</h2>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+        <sc-for list="{{people}}" as="p" hint-placeholder-count="3">
+          <li style="border-bottom: 1px solid #E4E1D9">
+            <a href="FriendProfile.dc.html" style="min-height: 60px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #16181A">
+              <div aria-hidden="true" style="width: 36px; height: 36px; border-radius: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; {{p.avatarStyle}}">{{p.initial}}</div>
+              <div style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</div>
+              <span style="font-size: 13px; color: #5F6368">{{p.note}}</span>
+            </a>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+  </div>
+
+  <footer style="padding: 12px 24px 34px; border-top: 1px solid #E4E1D9; display: flex; flex-direction: column; gap: 8px">
+    <button onClick="{{toggle}}" style="height: 56px; border-radius: 28px; font-size: 17px; font-weight: 700; {{btnStyle}}">{{btnLabel}}</button>
+    <div style="font-size: 13px; color: #5F6368; text-align: center">{{hint}}</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1F7A4D","options":["#1F7A4D","#2F5BD3","#C2410C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { joined: true };
+  }
+  renderVals() {
+    const st = (bg, fg) => 'background: ' + bg + '; color: ' + fg;
+    const joined = this.state.joined;
+    const people = [
+      { initial: 'A', name: 'Ana', note: 'Host', avatarStyle: st('#E2D9C6', '#3A3226') },
+      { initial: 'L', name: 'Leo', note: '', avatarStyle: st('#C9D7F2', '#1F2B44') },
+      { initial: 'S', name: 'Sam', note: '', avatarStyle: st('#F2D3C9', '#4A2418') }
+    ];
+    if (joined) people.push({ initial: 'J', name: 'You', note: '', avatarStyle: st('#E9E6DF', '#16181A') });
+    return {
+      accent: this.props.accent ?? '#1F7A4D',
+      people,
+      count: people.length,
+      toggle: () => this.setState({ joined: !joined }),
+      btnLabel: joined ? 'Leave' : 'Join Ana',
+      btnStyle: joined
+        ? 'border: 1.5px solid #B42318; background: transparent; color: #B42318'
+        : 'border: 0; background: #16181A; color: #F6F5F1',
+      hint: joined ? "You're in Ana's session." : "Your friends will see you're at SciLi too."
+    };
+  }
+}
+</script>
+</body>
+</html>

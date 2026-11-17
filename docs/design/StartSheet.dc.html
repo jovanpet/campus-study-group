@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Start session</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#16181A}a:hover{color:#000000}
+button{font:inherit;cursor:pointer}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 1160px; box-sizing: border-box; background: #F6F5F1; color: #16181A; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; min-height: 0; padding: 52px 24px 0; display: flex; flex-direction: column; gap: 20px">
+    <a href="Main.dc.html" aria-label="Back to home" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16181A">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em">Start your study session</h1>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="spot" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Spot</label>
+      <input id="spot" type="text" placeholder="e.g. SciLi, 4th floor" value="SciLi, 4th floor" style="height: 56px; box-sizing: border-box; padding: 0 18px; border-radius: 16px; border: 1.5px solid #16181A; background: #FFFFFF; color: #16181A; font-size: 17px; outline: none">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Time <span style="text-transform: none; letter-spacing: 0; font-weight: 400">(optional)</span></div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button style="min-height: 60px; box-sizing: border-box; padding: 10px 16px; border-radius: 16px; border: 1px solid #D6D3CB; background: #FFFFFF; color: #16181A; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; text-align: left">
+          <span style="font-size: 13px; color: #5F6368">Starts</span>
+          <span style="font-size: 17px; font-weight: 700">Now</span>
+        </button>
+        <button style="min-height: 60px; box-sizing: border-box; padding: 10px 16px; border-radius: 16px; border: 1px dashed #B9B5AC; background: transparent; color: #16181A; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; text-align: left">
+          <span style="font-size: 13px; color: #5F6368">Ends</span>
+          <span style="font-size: 17px; font-weight: 700; color: #5F6368">Add time</span>
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <div id="who" style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5F6368">Who can see it</div>
+      <div role="group" aria-labelledby="who" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: #E9E6DF">
+        <button aria-pressed="{{allPressed}}" onClick="{{showAll}}" style="height: 44px; border-radius: 12px; border: 0; font-size: 15px; {{allSeg}}">All friends</button>
+        <button aria-pressed="{{groupPressed}}" onClick="{{showGroup}}" style="height: 44px; border-radius: 12px; border: 0; font-size: 15px; {{groupSeg}}">One group</button>
+      </div>
+
+      <sc-if value="{{isAll}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column">
+          <div style="font-size: 14px; color: #5F6368; margin-bottom: 4px">All 6 friends will see it and get a ping.</div>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+            <sc-for list="{{friends}}" as="f" hint-placeholder-count="6">
+              <li style="min-height: 52px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E4E1D9">
+                <div aria-hidden="true" style="width: 32px; height: 32px; border-radius: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; {{f.avatarStyle}}">{{f.initial}}</div>
+                <span id="{{f.id}}" style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">{{f.name}}</span>
+                <span role="checkbox" aria-checked="true" aria-disabled="true" aria-labelledby="{{f.id}}" style="width: 24px; height: 24px; margin-right: 10px; border-radius: 7px; background: #16181A; color: #F6F5F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                </span>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isGroup}}" hint-placeholder-val="{{true}}">
+        <div role="radiogroup" aria-label="Group" style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="box-sizing: border-box; border-radius: 16px; background: #FFFFFF; display: flex; flex-direction: column; {{g.borderStyle}}">
+                <div style="min-height: 56px; display: flex; align-items: center">
+                  <button role="radio" aria-checked="{{g.checked}}" onClick="{{g.pick}}" style="flex: 1; min-width: 0; min-height: 56px; padding: 0 8px 0 16px; border: 0; border-radius: 16px; background: transparent; color: #16181A; display: flex; align-items: center; gap: 12px; text-align: left">
+                    <span aria-hidden="true" style="width: 22px; height: 22px; box-sizing: border-box; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; {{g.radioStyle}}">
+                      <span style="width: 10px; height: 10px; border-radius: 5px; {{g.dotStyle}}"></span>
+                    </span>
+                    <span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{g.name}}</span>
+                  </button>
+                  <sc-if value="{{g.canEdit}}" hint-placeholder-val="{{false}}">
+                    <button aria-label="{{g.menuLabel}}" aria-expanded="{{g.expanded}}" onClick="{{g.toggleMenu}}" style="width: 44px; height: 44px; margin-right: 6px; border: 0; border-radius: 22px; background: transparent; color: #5F6368; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+                      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg>
+                    </button>
+                  </sc-if>
+                </div>
+                <sc-if value="{{g.isSelected}}" hint-placeholder-val="{{false}}">
+                  <div style="border-top: 1px solid #EEECE6; padding: 4px 6px 6px 16px; display: flex; flex-direction: column">
+                    <sc-for list="{{g.people}}" as="p" hint-placeholder-count="4">
+                      <div style="min-height: 48px; display: flex; align-items: center; gap: 12px">
+                        <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; {{p.avatarStyle}}">{{p.initial}}</div>
+                        <span id="{{p.id}}" style="flex: 1; min-width: 0; font-size: 15px; font-weight: 700; {{p.nameStyle}}">{{p.name}}</span>
+                        <button role="checkbox" aria-checked="{{p.checked}}" aria-labelledby="{{p.id}}" onClick="{{p.toggle}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+                          <span aria-hidden="true" style="width: 22px; height: 22px; box-sizing: border-box; border-radius: 6px; display: flex; align-items: center; justify-content: center; {{p.boxStyle}}">
+                            <sc-if value="{{p.on}}" hint-placeholder-val="{{true}}">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F6F5F1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                            </sc-if>
+                          </span>
+                        </button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{g.menuOpen}}" hint-placeholder-val="{{false}}">
+                <div role="menu" aria-label="{{g.menuLabel}}" style="align-self: flex-end; width: 200px; padding: 6px; border-radius: 14px; background: #FFFFFF; border: 1px solid #E4E1D9; box-shadow: 0 8px 24px rgba(22, 24, 26, 0.12); display: flex; flex-direction: column">
+                  <a role="menuitem" href="NewGroup.dc.html" style="min-height: 44px; padding: 0 12px; border-radius: 10px; color: #16181A; text-decoration: none; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700">
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg>
+                    Edit group
+                  </a>
+                  <button role="menuitem" onClick="{{g.remove}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: #B42318; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; text-align: left">
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg>
+                    Delete group
+                  </button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+          <a href="NewGroup.dc.html" style="min-height: 56px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; border: 1.5px dashed #B9B5AC; color: #16181A; text-decoration: none; display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            New group
+          </a>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <footer style="padding: 12px 24px 34px; border-top: 1px solid #E4E1D9; display: flex">
+    <a href="Studying.dc.html" style="flex: 1; height: 56px; border-radius: 28px; background: #16181A; color: #F6F5F1; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700">Start session</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1160}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'group', group: 'cs1670', menu: null, deleted: {}, off: { 'cs1670:marko': true } };
+  }
+  renderVals() {
+    const isAll = this.state.mode === 'all';
+    const on = 'background: #FFFFFF; color: #16181A; font-weight: 700';
+    const offSeg = 'background: transparent; color: #3C4043; font-weight: 400';
+    const st = (bg, fg) => 'background: ' + bg + '; color: ' + fg;
+    const people = {
+      ana: ['A', 'Ana', '#E2D9C6', '#3A3226'],
+      ines: ['I', 'Ines', '#E6D6EC', '#3B2443'],
+      leo: ['L', 'Leo', '#C9D7F2', '#1F2B44'],
+      marko: ['M', 'Marko', '#D6DBE6', '#262E3E'],
+      priya: ['P', 'Priya', '#D3DED3', '#24382A'],
+      sam: ['S', 'Sam', '#F2D3C9', '#4A2418']
+    };
+    const f = (key) => {
+      const [initial, name, bg, fg] = people[key];
+      return { id: 's-' + key, initial, name, avatarStyle: st(bg, fg) };
+    };
+    const g = (id, name, memberKeys, canEdit) => {
+      const isSelected = this.state.group === id;
+      const menuOpen = this.state.menu === id;
+      const members = memberKeys.map((key) => {
+        const [initial, pname, bg, fg] = people[key];
+        const offKey = id + ':' + key;
+        const included = !this.state.off[offKey];
+        return {
+          id: 'm-' + id + '-' + key, initial, name: pname, on: included,
+          checked: included ? 'true' : 'false',
+          avatarStyle: st(bg, fg),
+          nameStyle: included ? '' : 'color: #5F6368; text-decoration: line-through',
+          boxStyle: included ? 'background: #16181A' : 'border: 2px solid #B9B5AC',
+          toggle: () => this.setState({ off: { ...this.state.off, [offKey]: included } })
+        };
+      });
+      const count = members.filter((m) => m.on).length;
+      return {
+        id, name, canEdit, menuOpen, isSelected,
+        people: members,
+        countLabel: count + ' of ' + members.length + ' will see it and get a ping',
+        checked: isSelected ? 'true' : 'false',
+        expanded: menuOpen ? 'true' : 'false',
+        menuLabel: 'Options for ' + name,
+        pick: () => {
+          if (isSelected) return;
+          const off = {};
+          Object.keys(this.state.off).forEach((k) => { if (!k.startsWith(id + ':')) off[k] = this.state.off[k]; });
+          this.setState({ group: id, menu: null, off });
+        },
+        toggleMenu: () => this.setState({ menu: menuOpen ? null : id }),
+        remove: () => this.setState({
+          deleted: { ...this.state.deleted, [id]: true },
+          menu: null,
+          group: isSelected ? 'major' : this.state.group
+        }),
+        borderStyle: isSelected ? 'border: 1.5px solid #16181A' : 'border: 1.5px solid #E4E1D9',
+        radioStyle: isSelected ? 'border: 2px solid #16181A' : 'border: 2px solid #B9B5AC',
+        dotStyle: isSelected ? 'background: #16181A' : 'background: transparent'
+      };
+    };
+    return {
+      isAll, isGroup: !isAll,
+      allPressed: isAll ? 'true' : 'false',
+      groupPressed: isAll ? 'false' : 'true',
+      allSeg: isAll ? on : offSeg,
+      groupSeg: isAll ? offSeg : on,
+      showAll: () => this.setState({ mode: 'all' }),
+      showGroup: () => this.setState({ mode: 'group' }),
+      friends: ['ana', 'ines', 'leo', 'marko', 'priya', 'sam'].map(f),
+      groups: [
+        g('major', 'Computer Science majors', ['leo', 'marko', 'priya', 'sam'], false),
+        g('cs1670', 'CS 1670 study', ['ana', 'leo', 'priya', 'sam', 'marko'], true),
+        g('late', 'Late-night crew', ['ines', 'leo', 'marko'], true)
+      ].filter((x) => !this.state.deleted[x.id])
+    };
+  }
+}
+</script>
+</body>
+</html>
